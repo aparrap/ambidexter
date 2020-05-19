@@ -1,9 +1,11 @@
 {
-  "app": "/iOSApp/",
+  "url": "127.0.0.1",
+  "port": "4723",
+  "app": "/iOSApp/TestApplication.zip",
   "automationName" : "XCUITest",
   "platformName" : "iOS",
   "nativeWebTap" : true,
-  "platformVersion" : "13.1",
+  "platformVersion" : "13.4",
   "deviceName" : "iPhone 11",
   "newCommandTimeout" : 60000,
   "noReset" : false

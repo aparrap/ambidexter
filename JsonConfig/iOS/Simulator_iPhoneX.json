@@ -1,5 +1,7 @@
 {
-  "app": "/iOSApp/",
+  "url": "127.0.0.1",
+  "port": "4723",
+  "app": "/iOSApp/TestApplication.zip",
   "automationName" : "XCUITest",
   "platformName" : "iOS",
   "nativeWebTap" : true,

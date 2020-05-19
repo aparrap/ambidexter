@@ -6,10 +6,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import gmbh.ambidexter.automation.cucumber.MobileContext;
 import gmbh.ambidexter.automation.pageobjects.AndroidPickerPO;
+import gmbh.ambidexter.automation.pageobjects.iOSDatePickerPO;
 import gmbh.ambidexter.automation.utils.StringUtils;
 import io.appium.java_client.MobileElement;
 import io.cucumber.java.en.Given;
@@ -21,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SelectDateSteps {
     private MobileContext mMobileContext;
     private AndroidPickerPO mAndroidPickerPO;
+    private iOSDatePickerPO mIOSDatePicker;
     private WebDriverWait mWait;
 
     public SelectDateSteps(MobileContext context) {
@@ -30,16 +34,30 @@ public class SelectDateSteps {
 
     @Given("The user checks that the app is open on iOS")
     public void theUserChecksThatTheAppIsOpenOnIOS() {
-
+        mIOSDatePicker = mMobileContext.getPageObjectManager().getIOSDatePickerPO();
+        mWait.until(ExpectedConditions.visibilityOf(mIOSDatePicker.getDayPickerWheel()));
+        assertThat(mIOSDatePicker.getDayPickerWheel().isDisplayed()).isTrue();
     }
 
-    @When("The user selects a date {string} on the iOS device")
-    public void theUserSelectsADateOnTheIOSDevice(String date) {
-
+    @When("The user selects a formatted date {string}, {string} {string} {string} on the iOS device")
+    public void theUserSelectsADateOnTheIOSDevice(String DoW, String hours, String minutes, String time)
+            throws ParseException {
+        selectDoW(DoW);
+        mIOSDatePicker.getHourPickerWheel().setValue(hours);
+        mIOSDatePicker.getMinutePickerWheel().setValue(minutes);
+        mIOSDatePicker.getTimePickerWheel().setValue(time);
     }
 
-    @Then("The date is selected on the iOS device")
-    public void theDateIsSelectedOnTheIOSDevice() {
+    @Then("The date {string}, {string} {string} {string} is selected on the iOS device")
+    public void theDateIsSelectedOnTheIOSDevice(String DoW, String hours, String minutes, String time) {
+        //Validates the PickerWheel values to be the same as the searched ones
+        if (!mIOSDatePicker.getDayPickerWheel().getText().equalsIgnoreCase("Today")) {
+            assertThat(mIOSDatePicker.getDayPickerWheel().getText()).isEqualToIgnoringCase(DoW);
+        }
+        assertThat(mIOSDatePicker.getHourPickerWheel().getText()).containsIgnoringCase(hours);
+        assertThat(mIOSDatePicker.getMinutePickerWheel().getText()).containsIgnoringCase(minutes);
+        assertThat(mIOSDatePicker.getTimePickerWheel().getText()).containsIgnoringCase(time);
+        mMobileContext.getAppiumDriverManager().getAppiumDriver().quit();
     }
 
     @Given("The user checks that the app is open on Android")
@@ -52,6 +70,7 @@ public class SelectDateSteps {
     @When("The user selects a date {string} on the Android device")
     public void theUserSelectsADateOnTheAndroidDevice(String date)
             throws ParseException {
+        //Call to mehods to interact with the date pickers on the UI to be able to select the year, the month and the day in the calendar View
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy");
         selectYear(simpleDateFormat.parse(date).toInstant().atZone(ZoneId.systemDefault()).getYear());
         selectMonth(simpleDateFormat.parse(date).toInstant().atZone(ZoneId.systemDefault()).getMonthValue());
@@ -61,6 +80,7 @@ public class SelectDateSteps {
     @Then("The date {string} is selected on the Android device")
     public void theDateIsSelectedOnTheAndroidDevice(String date)
             throws ParseException {
+        // The date is formatted to enable comparison between dates and separated to compare with the ones on the UI
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy");
         String dayOfTheWeek = simpleDateFormat.parse(date).toInstant().atZone(ZoneId.systemDefault()).getDayOfWeek().name();
         String monthOfTheYear = simpleDateFormat.parse(date).toInstant().atZone(ZoneId.systemDefault()).getMonth().name();
@@ -79,7 +99,7 @@ public class SelectDateSteps {
         if (androidVersion.equalsIgnoreCase("10")) {
             assertThat(monthOfTheYear).containsIgnoringCase(splittedMonthAndDay[2]);
             assertThat(dayOfTheMonth).isEqualTo(Integer.parseInt(splittedMonthAndDay[1]));
-        }else {
+        } else {
             assertThat(monthOfTheYear).containsIgnoringCase(splittedMonthAndDay[1]);
             assertThat(dayOfTheMonth).isEqualTo(Integer.parseInt(splittedMonthAndDay[2]));
         }
@@ -87,7 +107,34 @@ public class SelectDateSteps {
         mMobileContext.getAppiumDriverManager().getAppiumDriver().quit();
     }
 
-//Method to select the corresponding day inside the Month View
+    private void selectDoW(String DoW)
+            throws ParseException {
+        /* As the wheel picker for selecting the day does not behave the same as the other ones, a javascript injection is necessary
+        to interact with the element. The dates are formatted to enable comparison and the wheel picker is moved by one item accordingly
+        to the search, if the date is the same as the current one no interaction is made*/
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EE, MMM dd");
+        Date lookOutDate = simpleDateFormat.parse(DoW);
+        Date dateOnPicker = simpleDateFormat.parse(simpleDateFormat.format(new Date()));
+        HashMap<String, Object> params = new HashMap<>();
+
+        while (dateOnPicker.after(lookOutDate)) {
+            params.put("order", "previous");
+            params.put("offset", 0.15);
+            params.put("element", mIOSDatePicker.getDayPickerWheel());
+            mMobileContext.getAppiumDriverManager().getAppiumDriver().executeScript("mobile: selectPickerWheelValue", params);
+            dateOnPicker = simpleDateFormat.parse(mIOSDatePicker.getDayPickerWheel().getText());
+        }
+        while (dateOnPicker.before(lookOutDate)) {
+            params.put("order", "next");
+            params.put("offset", 0.15);
+            params.put("element", mIOSDatePicker.getDayPickerWheel());
+            mMobileContext.getAppiumDriverManager().getAppiumDriver().executeScript("mobile: selectPickerWheelValue", params);
+            dateOnPicker = simpleDateFormat.parse(mIOSDatePicker.getDayPickerWheel().getText());
+        }
+    }
+
+    //Method to select the corresponding day inside the Month View
     public void selectDate(String date) {
         String formattedDate = null;
         mWait.until(ExpectedConditions.visibilityOf(mAndroidPickerPO.getMonthView()));
