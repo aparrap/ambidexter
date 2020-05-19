@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extentreports>
+    <configuration>
+        <theme>dark</theme>
+        <encoding>UTF-8</encoding>
+        <protocol>http</protocol>
+        <documentTitle>Free2Move Automated Test Report</documentTitle>
+        <reportName>Test Report</reportName>
+        <testViewChartLocation>bottom</testViewChartLocation>
+        <scripts>
+            <![CDATA[
+            $(document).ready(function() {
+});
+]]>
+        </scripts>
+        <!-- custom styles -->
+        <styles>
+            <![CDATA[
+]]>
+        </styles>
+    </configuration>
+</extentreports>

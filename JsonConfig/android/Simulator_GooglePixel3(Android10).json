@@ -1,0 +1,15 @@
+{
+  "url": "127.0.0.1",
+  "port": "4723",
+  "automationName": "UiAutomator2",
+  "app": "/AndroidApp/app-debug.apk",
+  "appPackage": "gmbh.ambidexter.testapplication",
+  "appActivity": "gmbh.ambidexter.testapplication.main.MainActivity",
+  "noSign": true,
+  "platformName": "Android",
+  "platformVersion": "10",
+  "deviceName": "Pixel 3 API 29",
+  "avd": "Pixel_3_API_29",
+  "newCommandTimeout": 60000,
+  "noReset": false
+}

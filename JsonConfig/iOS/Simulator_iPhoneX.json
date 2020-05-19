@@ -1,0 +1,10 @@
+{
+  "app": "/iOSApp/",
+  "automationName" : "XCUITest",
+  "platformName" : "iOS",
+  "nativeWebTap" : true,
+  "platformVersion" : "12.4",
+  "deviceName" : "iPhone X",
+  "newCommandTimeout" : 60000,
+  "noReset" : false
+}
