@@ -1,3 +1,93 @@
+# Yunar technical test
+
+Before you can run please make sure to download the following SDK for iOS:
+ * 11.4
+ * 12.4
+ * 13.4
+ 
+ And for Android please create the following emulators: 
+ * Pixel API 23
+ * Pixel2 API 24
+ * Pixel2 API 26
+ * Pixel2 API 28
+ * Pixel3 API 29
+ 
+These are the following commands to be able to run each scenario on the proper device, on the terminal please go to the project root folder and execute on of the following commands
+
+*ANDROID*
+```
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/android/Android_TestApp.feature"
+               -DtestingDevice="android/Simulator_GooglePixel(Android6)"
+```
+```
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/android/Android_TestApp.feature"
+               -DtestingDevice="android/Simulator_GooglePixel2(Android7)"
+```
+```
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/android/Android_TestApp.feature"
+               -DtestingDevice="android/Simulator_GooglePixel2(Android8)"
+```
+```
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/android/Android_TestApp.feature"
+               -DtestingDevice="android/Simulator_GooglePixel2(Android9)"
+```
+```            
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/android/Android_TestApp.feature"
+               -DtestingDevice="android/Simulator_GooglePixel3(Android10)"
+```
+*IOS*
+```
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/iOS/iOS_TestApp.feature"
+               -DtestingDevice="iOS/Simulator_iPhone8"
+```
+```
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/iOS/iOS_TestApp.feature"
+               -DtestingDevice="iOS/Simulator_iPhoneX"
+```
+```
+mvn clean test -Dcucumber.options="--glue gmbh/ambidexter/automation/steps  src/test/java/gmbh/ambidexter/automation/features/iOS/iOS_TestApp.feature"
+               -DtestingDevice="iOS/Simulator_iPhone11"
+```
+
+###### Creating a test run with existent features
+*Note:* IntelliJ IDEA is recommended for running the scenarios, as this tutorial material and screens are based on it.
+
+First on your main IntelliJ window click on the 'Run' option located in the top bar and then click on 'Configurations...'
+![Click on 'Configurations...' under 'Run' option on the top bar](./src/test/resources/tutorial/1.png)
+
+On the configuration window, locate the JUnit on the side bar and click on the '+' mark to add a new JUnit configuration
+![Click on the '+' on the JUnit option on the side bar](./src/test/resources/tutorial/2.png)
+
+On the new JUnit configuration screen make sure the proper module is selected under the 'Use classpath of module' field
+![Select proper module folder](./src/test/resources/tutorial/3.png)
+
+Now click on the '...' on the 'Class' field and select our Junit Runner class
+![Expand the Runner Class option](./src/test/resources/tutorial/4.png)
+![Select the given JUnit Runner Class](./src/test/resources/tutorial/6.png)
+
+Finally, click on the 'VM options' and then you will be able to input the parameters to configure the execution of any developed feature,
+just make sure to differentiate between the built-in cucumber parameters and the custom ones, just follow these recommendations.
+1. Always start with _-Dcucumber.options="..."_, it tells IntelliJ that we are running a Cucumber feature, and all the parameters inside from cucumber itself.
+    * **--glue :** Path that tells cucumber where are our step definition files. Is important to include all the folders where our step-definition files are to allow cucumber to access the code from our feature file.
+    * **--tags :** If the feature files contains a specific tag to include or exclude certain scenarios is mandatory to add this parameter.  
+    * **path to the feature file** We can add as many scenarios as we want, but separate paths must be given to each one.
+2. There are custom parameters not belonging to cucumber, but mandatory to give the test run more flexibility and give the tester more power to customize the test run.
+    * **-DtestingDevice="...":** In this field a Path must be given. On the JSonConfig folder on the project there is a collection of json files which contains a collection of 
+    capabilities to enable Android emulators and iOS simulators (and real devices too) for Appium to run and instantiate different 
+    devices with different configurations depending on the needs of the test run.
+    * **-DtestingBrowser="...":** If our test is for web, the name of the browser must be given in this field, to enable Selenium 
+    instantiate the corresponding driver and test the corresponding browser. 'chrome' , 'firefox' and 'safari' are the accepted values for this field.
+
+Finally, our configuration run must look like this: 
+![Configuartion complete](./src/test/resources/tutorial/5.png)
+ Just give it a name and save it.
+ 
+ Now to run it, just go again to the 'Run' option on the top bar and select 'Run' or 'Debug' depending on what are you going to do and selected the created configuration.
+![Selecting our configuration to run](./src/test/resources/tutorial/7.png)
+ 
+###### Cucumber and BDD
+The framework uses BDD to write test cases, if you are not familiar neither Cucumber or BDD go through [this documentarion](https://cucumber.io/blog/2017/05/15/intro-to-bdd-and-tdd) about Gherkin and how BDD works.
+
 # Java Automation Framework
 
 It uses Java as main language, [Selenium WebDriver](http://www.seleniumhq.org) for Web testing, [Appium](http://appium.io) for Mobile testing and [RestAssured](http://rest-assured.io) for API testing. It supports multiple browsers, mobile simulators and real devices for test automation.

@@ -1,5 +1,4 @@
-Feature: As an automation engineer I want to automate scenarios when updating the Free2Move App to a newer version so
-  information related to connected providers or login status remain the same.
+Feature: YUNAR by Ambidexter Automation challenge
 
   Scenario Outline: You will need to create a test script that can select any date from a date picker. Since the date picker is implemented differently on Android and iOS (and even across Android SDK versions)
     Given The user checks that the app is open on Android
